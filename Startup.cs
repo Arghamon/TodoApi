@@ -1,10 +1,10 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using TodoApi.Models;
+using TodoApi.Options;
+using TodoApi.Installers;
 
 namespace TodoApi
 {
@@ -20,11 +20,7 @@ namespace TodoApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
-            services.AddDbContext<TodoContext>(options =>
-            {
-                options.UseNpgsql(Configuration.GetConnectionString("TodoDatabase"));
-            });
+            services.InstallServicesInAssembly(Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -35,16 +31,20 @@ namespace TodoApi
                 app.UseDeveloperExceptionPage();
             }
 
+            var swaggerOptions = new SwaggerOptions();
+            Configuration.GetSection(nameof(swaggerOptions)).Bind(swaggerOptions);
+
+            app.UseSwagger(option => { option.RouteTemplate = swaggerOptions.JsonRoute; });
+
+            app.UseSwaggerUI(option => { option.SwaggerEndpoint(swaggerOptions.UiEndpoint, swaggerOptions.Description); });
+
             app.UseHttpsRedirection();
 
             app.UseRouting();
 
-            app.UseAuthorization();
+            app.UseStaticFiles();
 
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
+            app.UseEndpoints(endpoint => { endpoint.MapControllers(); });
         }
     }
 }

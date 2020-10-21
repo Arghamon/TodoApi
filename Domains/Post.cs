@@ -1,8 +1,11 @@
 ﻿using System;
-namespace TodoApi.Contracts.V1.Responses
+using System.ComponentModel.DataAnnotations;
+
+namespace TodoApi.Domains
 {
-    public class PostResponse
+    public class Post
     {
+        [Key]
         public Guid Id { get; set; }
         public string Name { get; set; }
     }

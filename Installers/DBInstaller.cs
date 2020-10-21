@@ -1,6 +1,8 @@
-﻿using System;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.EntityFrameworkCore;
+using TodoApi.Services;
+using TodoApi.Data;
 
 namespace TodoApi.Installers
 {
@@ -8,7 +10,9 @@ namespace TodoApi.Installers
     {
         public void InstallService(IServiceCollection services, IConfiguration configuration)
         {
-            //throw new NotImplementedException();
+            services.AddDbContext<DataContext>(options => options.UseNpgsql(configuration.GetConnectionString("TweetBook")));
+            services.AddScoped<IPostService, PostService>();
+            services.AddScoped<IIdentityService, IdentityService>();
         }
     }
 }

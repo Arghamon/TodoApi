@@ -6,19 +6,21 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.9" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.4" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="3.1.4" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.9" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Options\" />
-    <Folder Include="Models\" />
-    <Folder Include="Migrations\" />
     <Folder Include="Domains\" />
-    <Folder Include="Domains\V1\" />
+    <Folder Include="Migrations\" />
     <Folder Include="Contracts\" />
     <Folder Include="Contracts\V1\" />
     <Folder Include="Installers\" />
     <Folder Include="Contracts\V1\Requests\" />
     <Folder Include="Contracts\V1\Responses\" />
+    <Folder Include="Services\" />
+    <Folder Include="Data\" />
   </ItemGroup>
 </Project>

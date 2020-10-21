@@ -1,48 +1,86 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+
 using TodoApi.Contracts.V1;
 using TodoApi.Contracts.V1.Requests;
 using TodoApi.Contracts.V1.Responses;
-using TodoApi.Domains.V1;
+using TodoApi.Domains;
+using TodoApi.Services;
 
 namespace TodoApi.Controllers
 {
     public class PostsController : Controller
     {
 
-        private List<Post> _posts;
+        private readonly IPostService _postService;
 
-        public PostsController()
+        public PostsController(IPostService postService)
         {
-            _posts = new List<Post>();
-            for (var i = 0; i < 5; i++)
-            {
-                _posts.Add(new Post { Id = Guid.NewGuid().ToString() });
-            }
+            _postService = postService;
         }
 
+
+        // GET: api/posts
         [HttpGet(ApiRoutes.Post.GetAll)]
-        public IActionResult Get()
+        public async Task<IActionResult> GetAll()
         {
-            return Ok(_posts);
+            return Ok(await _postService.GetPostsAsync());
         }
 
-        [HttpPost(ApiRoutes.Post.Create)]
-        public IActionResult CreatePost([FromBody] PostRequest postRequest)
+        // GET: api/posts/{id}
+        [HttpGet(ApiRoutes.Post.Get)]
+        public async Task<IActionResult> Get([FromRoute] Guid postId)
         {
-            var post = new Post { Id = postRequest.Id };
+            var post = await _postService.GetPostByIdAsync(postId);
 
+            if (post == null)
+                return NotFound();
 
-            if (post.Id == null)
-                return BadRequest();
+            return Ok(post);
+        }
 
-            var respnse = new PostResponse { Id = post.Id };
+        // PUT: api/posts/{id}
+        [HttpPut(ApiRoutes.Post.Update)]
+        public async Task<IActionResult> Update([FromRoute] Guid postId, [FromBody] UpdatePostRequest request)
+        {
+            var post = new Post { Id = postId, Name = request.Name };
+            var updated = await _postService.UpdatePostAsync(post);
+
+            if (updated)
+                return Ok(post);
+
+            return NotFound();
+        }
+
+        // POST: api/posts
+        [HttpPost(ApiRoutes.Post.Create)]
+        public async Task<IActionResult> CreatePost([FromBody] CreatePostRequest request)
+        {
+            var post = new Post { Name = request.Name };
+
+            Console.WriteLine(post.Id);
+
+            await _postService.CreatePostAsync(post);
+
+            var response = new PostResponse { Id = post.Id, Name = post.Name };
 
             var baseUrl = $"{HttpContext.Request.Scheme}//{HttpContext.Request.Host.ToUriComponent()}";
-            var locarionUri = baseUrl + "/" + ApiRoutes.Post.Get.Replace("{postId}", post.Id);
+            var locarionUri = baseUrl + "/" + ApiRoutes.Post.Get.Replace("{postId}", post.Id.ToString());
 
-            return Created(locarionUri, respnse);
+            return Created(locarionUri, response);
+        }
+
+        // DELETE: api/posts/{id}
+        [HttpDelete(ApiRoutes.Post.Delete)]
+        public async Task<IActionResult> Delete(Guid postId)
+        {
+            var deleted = await _postService.DeletePostAsync(postId);
+
+            if (deleted)
+                return NoContent();
+
+            return NotFound();
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System;
-namespace TodoApi.Contracts.V1.Responses
+namespace TodoApi.Contracts.V1.Requests
 {
-    public class AuthSuccessResponse
+    public class RefreshTokenRequest
     {
         public string Token { get; set; }
         public string RefreshToken { get; set; }

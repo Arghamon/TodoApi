@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using TodoApi.Options;
 using TodoApi.Installers;
+using Microsoft.IdentityModel.Logging;
 
 namespace TodoApi
 {
@@ -20,6 +21,7 @@ namespace TodoApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            IdentityModelEventSource.ShowPII = true; //To show detail of error and see the problem
             services.InstallServicesInAssembly(Configuration);
         }
 
@@ -35,7 +37,6 @@ namespace TodoApi
             Configuration.GetSection(nameof(swaggerOptions)).Bind(swaggerOptions);
 
             app.UseAuthentication();
-
 
             app.UseSwagger(option => { option.RouteTemplate = swaggerOptions.JsonRoute; });
 

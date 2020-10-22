@@ -10,6 +10,10 @@
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="3.1.4" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.9" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="3.1.9" />
+    <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="3.1.9" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.9" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="6.0.1" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Options\" />
@@ -22,5 +26,6 @@
     <Folder Include="Contracts\V1\Responses\" />
     <Folder Include="Services\" />
     <Folder Include="Data\" />
+    <Folder Include="Ectensions\" />
   </ItemGroup>
 </Project>

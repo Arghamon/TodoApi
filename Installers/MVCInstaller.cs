@@ -8,6 +8,7 @@ using System.Text;
 using System.Collections.Generic;
 
 using TodoApi.Options;
+using Swashbuckle.AspNetCore.Filters;
 
 namespace TodoApi.Installers
 {
@@ -56,6 +57,14 @@ namespace TodoApi.Installers
                     In = ParameterLocation.Header,
                     Type = SecuritySchemeType.ApiKey
                 });
+
+                x.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    { new OpenApiSecurityScheme{Reference = new OpenApiReference { Id = "Bearer", Type = ReferenceType.SecurityScheme }
+                },
+                        new List<string>()}
+                });
+
             });
         }
     }

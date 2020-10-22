@@ -53,5 +53,15 @@ namespace TodoApi.Services
 
             return deleted > 0;
         }
+
+        public async Task<bool> UserOwnsPost(Guid postId, string UserId)
+        {
+            var post = await context.Posts.AsNoTracking().SingleOrDefaultAsync(post => post.Id == postId);
+
+            if (post == null)
+                return false;
+
+            return post.UserId == UserId;
+        }
     }
 }

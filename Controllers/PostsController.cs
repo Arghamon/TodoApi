@@ -1,15 +1,19 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 using TodoApi.Contracts.V1;
 using TodoApi.Contracts.V1.Requests;
 using TodoApi.Contracts.V1.Responses;
 using TodoApi.Domains;
+using TodoApi.Ectensions;
 using TodoApi.Services;
 
 namespace TodoApi.Controllers
 {
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class PostsController : Controller
     {
 
@@ -44,7 +48,17 @@ namespace TodoApi.Controllers
         [HttpPut(ApiRoutes.Post.Update)]
         public async Task<IActionResult> Update([FromRoute] Guid postId, [FromBody] UpdatePostRequest request)
         {
-            var post = new Post { Id = postId, Name = request.Name };
+
+            var userOwnsPost = await _postService.UserOwnsPost(postId, HttpContext.GetUserId());
+
+            if (!userOwnsPost)
+            {
+                return BadRequest(new { Error = "You don't own this post" });
+            }
+
+            var post = await _postService.GetPostByIdAsync(postId);
+            post.Name = request.Name;
+
             var updated = await _postService.UpdatePostAsync(post);
 
             if (updated)
@@ -57,9 +71,11 @@ namespace TodoApi.Controllers
         [HttpPost(ApiRoutes.Post.Create)]
         public async Task<IActionResult> CreatePost([FromBody] CreatePostRequest request)
         {
-            var post = new Post { Name = request.Name };
-
-            Console.WriteLine(post.Id);
+            var post = new Post
+            {
+                Name = request.Name,
+                UserId = HttpContext.GetUserId()
+            };
 
             await _postService.CreatePostAsync(post);
 
@@ -75,6 +91,14 @@ namespace TodoApi.Controllers
         [HttpDelete(ApiRoutes.Post.Delete)]
         public async Task<IActionResult> Delete(Guid postId)
         {
+
+            var userOwnsPost = await _postService.UserOwnsPost(postId, HttpContext.GetUserId());
+
+            if (!userOwnsPost)
+            {
+                return BadRequest(new { Error = "You don't own this post" });
+            }
+
             var deleted = await _postService.DeletePostAsync(postId);
 
             if (deleted)

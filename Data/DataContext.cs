@@ -1,4 +1,4 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using TodoApi.Domains;
 
@@ -11,5 +11,6 @@ namespace TodoApi.Data
         }
 
         public DbSet<Post> Posts { get; set; }
+        public DbSet<IdentityUser> Users { get; set; }
     }
 }

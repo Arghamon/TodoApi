@@ -13,5 +13,6 @@ namespace TodoApi.Services
         Task<bool> CreatePostAsync(Post post);
         Task<bool> UpdatePostAsync(Post postToUpdate);
         Task<bool> DeletePostAsync(Guid postId);
+        Task<bool> UserOwnsPost(Guid postId, string UserId);
     }
 }

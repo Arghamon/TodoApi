@@ -9,6 +9,7 @@ using System.Collections.Generic;
 
 using TodoApi.Options;
 using Swashbuckle.AspNetCore.Filters;
+using System;
 
 namespace TodoApi.Installers
 {
@@ -32,6 +33,7 @@ namespace TodoApi.Installers
                 ValidateAudience = false,
                 RequireExpirationTime = false,
                 ValidateLifetime = true,
+                //ClockSkew = TimeSpan.Zero
             };
 
             services.AddSingleton(tokenValidationParameters); 

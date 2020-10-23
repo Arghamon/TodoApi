@@ -35,6 +35,8 @@ namespace TodoApi.Services
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_jwtSettings.Secret);
 
+            Console.WriteLine(DateTime.UtcNow.Add(_jwtSettings.TokenLifeTime));
+
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new[]
@@ -44,14 +46,12 @@ namespace TodoApi.Services
                     new Claim(JwtRegisteredClaimNames.Email, user.Email),
                     new Claim("id", user.Id)
                 }),
-                
-                Expires = DateTime.UtcNow.AddMonths(6),
+
+                Expires = DateTime.UtcNow.Add(_jwtSettings.TokenLifeTime),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
 
             var token = tokenHandler.CreateToken(tokenDescriptor);
-
-            Console.WriteLine(token);
 
             var refreshToken = new RefreshToken
             {
